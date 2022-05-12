@@ -11,6 +11,8 @@ public class Server
 
     public static void StartListening()
     {
+
+        
         // Data buffer for incoming data.  
         byte[] bytes = new Byte[1024];
 
@@ -18,7 +20,7 @@ public class Server
         // Dns.GetHostName returns the name of the
         // host running the application.  
         IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-        IPAddress ipAddress = ipHostInfo.AddressList[0];
+        IPAddress ipAddress = ipHostInfo.AddressList[1];
         IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
 
         // Create a TCP/IP socket.  
@@ -72,9 +74,39 @@ public class Server
 
     }
 
+    private static IPAddress ip = new IPAddress(new byte[] { 127, 0, 0, 1 });
+    private static Socket listener;
+    public static void Start()
+    {
+        IPEndPoint endPoint = new IPEndPoint(ip, 1234);
+        listener = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        listener.Bind(endPoint);
+        listener.Listen(6);
+
+        Console.WriteLine("Server start");
+        while (true)
+        {
+            Socket client = listener.Accept();
+            Console.WriteLine("Client connected");
+            
+            var thread = new Thread(() =>
+            {
+                SendOK(client);
+
+            });
+            thread.Start();
+        }
+    }
+    
+    public static void SendOK(Socket client)
+    {
+        byte[] msg = Encoding.ASCII.GetBytes("OK");
+        client.Send(msg);
+    }
+
     public static int Main(String[] args)
     {
-        StartListening();
+        Start();
         return 0;
     }
 }
