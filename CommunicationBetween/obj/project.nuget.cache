@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "9/GpKUVNHZp5cEd+iobzY5kwiwryPkl6NaYWBeWZa5doMP8itY6H/rFdyZAU7NDhw/0HfyXcEiybMnMQc7tnOQ==",
+  "dgSpecHash": "lP2GrCfyu/WnrHV7TStofwgrB1Isl3WX4LJzysQRZME+K46v5U6dTWnjvYaN1NMaKtUfvdaoUgxe4ms6JZfoPw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\M.HUE\\source\\repos\\ClientServer\\CommunicationBetween\\CommunicationBetween.csproj",
+  "projectFilePath": "D:\\ClientServer\\CommunicationBetween\\CommunicationBetween.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

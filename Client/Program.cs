@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-
-
-
+using System.CodeDom.Compiler;
+using System.Text.Json;
+using Newtonsoft.Json;
 // Client app is the one sending messages to a Server/listener.
 // Both listener and client can send messages back and forth once a
 // communication is established.
@@ -31,7 +31,7 @@ public class SocketClient
             // In this case, we get one IP address of localhost that is IP : 127.0.0.1
             // If a host has multiple addresses, you will get a list of addresses
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-            byte[] ip = new byte[4] { 192, 168, 56, 1 };
+            byte[] ip = new byte[4] { 10, 52, 203, 211 };
             IPAddress ipAddress = new(ip);
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, 9999);
 
@@ -109,17 +109,38 @@ public class SocketClient
 
     public static void Start()
     {
-        IPAddress ip = new(new byte[] { 127, 0, 0, 1 });
+        int age;
+        string nom;
+        IPAddress ip = new(new byte[] { 127,0, 0, 1 });
         IPEndPoint endPoint = new(ip, 1234);
         Socket socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
         socket.Connect(endPoint);
-
         byte[] buffer = new byte[1024];
         int length = socket.Receive(buffer);
         string resp = Encoding.ASCII.GetString(buffer, 0, length);
         Console.WriteLine(resp);
-        Console.ReadLine();
-    }
-        
+
+
+        Console.WriteLine("age");
+        age = int.Parse(Console.ReadLine());
+        Console.WriteLine("nom");
+        nom = Console.ReadLine();
+        string host = Dns.GetHostName();
+        string ipersonne = Dns.GetHostByName(host).AddressList[1].ToString();
+        CommunicationBetween.Personne ok = new CommunicationBetween.Personne(age,nom,ipersonne);
+        byte[] msg = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(ok));
+        int byteSent = socket.Send(msg);
+        while (true)
+        {
+            var thread = new Thread(() =>
+            {
+                byte[] reponse = new byte[1024];
+                int longue = socket.Receive(reponse);
+                string rep = Encoding.ASCII.GetString(reponse, 0, longue);
+                Console.WriteLine(rep);
+            });
+            thread.Start();
+        }
+        }
 }
